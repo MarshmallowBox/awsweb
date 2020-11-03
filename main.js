@@ -151,19 +151,24 @@ var app = http.createServer(function (request, response) {
                   <input class="form__inpit" type="text" name="title" placeholder="위치 이름">
                </div>
                <br>
-               <div class="form__filed" id="clickLating1">
+               <div class="form__filed">
                   <label class="fontawesome-user" for="name"> 위도&nbsp;</label>
-                  <input class="form__inpit" type="number" step="0.000001" name="latitude" placeholder="위도" value="clickLatlng1" style="height:20px" >
-                  <div id="clickLatlng1"></div>
+                  <script>
+                  var p = please();
+                  document.write(p);
+                  </script>
+                  &{p};
+                  <input type="hidden" name="latitude" value="&{test};">
+                  <label class="st" id="clickLatlng1" name="latitude1"></label>
                </div><br>
                
                <div class="form__filed">
                   <label class="fontawesome-user" for="name"> 경도&nbsp;</label>
-                  <input class="form__inpit" type="number"  step="0.000001" name="longtitude" placeholder="경도" style="width:70px;height:15px;">
+                  <input class="form__inpit" type="number" step="0.000001" name="longtitude" value="${longtitude}" style="height:20px">
+                  <div id="clickLatlng2"></div>
                </div><br><br><br>
                <div class="form__filed">
-                  <label class="fontawesome-user" for="name"> 설명&nbsp;</label>
-                  <textarea name="description" placeholder="설명"></textarea>
+                  <textarea name="description" placeholder="설명">"&{test};"</textarea>
                </div>
                <input type="submit">
             </div>
@@ -195,6 +200,7 @@ var app = http.createServer(function (request, response) {
             // 지도에 마커를 표시합니다
             marker.setMap(map);
 
+            var test;
             // 지도에 클릭 이벤트를 등록합니다
             // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
             kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
@@ -209,7 +215,7 @@ var app = http.createServer(function (request, response) {
                 message += '경도는 ' + latlng.getLng() + ' 입니다';
                 var message1 = latlng.getLat();
                 var message2 = latlng.getLng();
-                
+                test = message1;
                 var resultDiv = document.getElementById('clickLatlng'); 
                 var resultDiv1 = document.getElementById('clickLatlng1'); 
                 var resultDiv2 = document.getElementById('clickLatlng2'); 
@@ -217,7 +223,9 @@ var app = http.createServer(function (request, response) {
                 resultDiv.innerHTML = message;
                 resultDiv1.innerHTML = message1;
                 resultDiv2.innerHTML = message2;
-                
+                function please(){
+                    return message1;
+                }
                 
                 
             });
@@ -301,7 +309,7 @@ var app = http.createServer(function (request, response) {
                             center: new kakao.maps.LatLng(${latitude},${longtitude}), // 지도의 중심좌표
                             level: 3 // 지도의 확대 레벨
                         };
-
+                    
                     var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
                     // 지도를 클릭한 위치에 표출할 마커입니다
