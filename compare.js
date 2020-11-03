@@ -1,4 +1,5 @@
 var http = require('http');
+var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
@@ -7,7 +8,6 @@ var sanitizeHTML = require('sanitize-html');
 var mysql = require("mysql");
 var msg = require ('dialog');
 var rawdata ;
-
 //RDS 접속 정보
 var connection = mysql.createConnection({
     host: "nodejs-rds.cdaki73gryig.ap-northeast-2.rds.amazonaws.com",
@@ -41,11 +41,15 @@ var app = http.createServer(function (request, response) {
             var title = "Welcome";
             var description = "Hello, This is ddungdo's home";
             var list = template.Listrds(rawdata);
-            var html = template.HTML(title, list, `<h2>${title}</h2>${description}`,
+            var html = template.HTML(title, list, 
+         `<h2>${title}</h2>${description}`,
             `<table id="empList" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" data-upgraded=",MaterialDataTable">
-            <tbody><tr id="yy" class="mdl-data-table__cell--non-numeric">
-            <th><a href="/create">create</a></th>
-            </tr></table>`);
+                <tbody><tr id="yy" class="mdl-data-table__cell--non-numeric">
+                <th><a href="/create">create</a></th>
+                </tr></table>
+         
+                
+                `);
             response.writeHead(200);
             response.end(html);
         // 쿼리 데이터가 있을 때 (각 항목을 누른 상황)
@@ -61,6 +65,7 @@ var app = http.createServer(function (request, response) {
                 var list = template.Listrds(rawdata);
                 var html = template.HTML(title, list,
                     `<div id="tt"><h2 class="tt">${title}</h2>
+               
                   <div class="grid__container">
                      <div class="form--login" id="ds">
                         <br>
@@ -79,8 +84,10 @@ var app = http.createServer(function (request, response) {
                <div class="grid">
                   <div id="map"></div>
                </div>
-                    `,
-                    `
+               
+               
+               
+                    `,                        `
                     <table id="empList" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" data-upgraded=",MaterialDataTable">
                 <tbody><tr id="yy" class="mdl-data-table__cell--non-numeric">
                 <th><a href="/create">create</a></th>
@@ -90,47 +97,8 @@ var app = http.createServer(function (request, response) {
                         <input type="submit" class="del" value="delete">
                     </form></th>
                 </tr></table>
-                    `,`
-                    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=645c80425f05e9d578b464a870031381"></script>
-                    <div id="map" style="width:100%;height:350px;"></div>
-                    <div id="clickLatlng"></div>
-                    <script>
-                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                        mapOption = { 
-                            center: new kakao.maps.LatLng(${latitude},${longtitude}), // 지도의 중심좌표
-                            level: 3 // 지도의 확대 레벨
-                        };
-                    
-                        var positions = [
-                            {
-                                title: '카카오', 
-                                latlng: new kakao.maps.LatLng(${latitude}, ${longtitude})
-                            }
-                        ];    
-
-                    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                    // 마커 이미지의 이미지 주소입니다
-                    var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
-                        
-                    for (var i = 0; i < positions.length; i ++) {
-                        
-                        // 마커 이미지의 이미지 크기 입니다
-                        var imageSize = new kakao.maps.Size(24, 35); 
-                        
-                        // 마커 이미지를 생성합니다    
-                        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
-                        
-                        // 마커를 생성합니다
-                        var marker = new kakao.maps.Marker({
-                            map: map, // 마커를 표시할 지도
-                            position: positions[i].latlng, // 마커를 표시할 위치
-                            title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                            image : markerImage // 마커 이미지 
-                        });
-                    }
-                    
-                    </script>
+               
+               
                     `);
                 response.writeHead(200);
                 response.end(html);
@@ -140,9 +108,6 @@ var app = http.createServer(function (request, response) {
     } else if(pathname ==='/create'){
         var title = 'WEB - create';
         var list = template.Listrds(rawdata);
-        var latitude = "37.498284";
-        var test;
-        var longtitude = "127.034290";
         var html = template.HTML(title, list, `
             <form action="/create_process" method="post" class="form form--login">
             <div class="grid__container">
@@ -151,78 +116,21 @@ var app = http.createServer(function (request, response) {
                   <input class="form__inpit" type="text" name="title" placeholder="위치 이름">
                </div>
                <br>
-               <div class="form__filed" id="clickLating1">
+               <div class="form__filed">
                   <label class="fontawesome-user" for="name"> 위도&nbsp;</label>
-                  <input class="form__inpit" type="number" step="0.000001" name="latitude" placeholder="위도" value="clickLatlng1" style="height:20px" >
-                  <div id="clickLatlng1"></div>
+                  <input class="form__inpit" type="number"  step="0.000001" name="latitude" placeholder="위도" style="width:70px;height:15px;">
                </div><br>
-               
                <div class="form__filed">
                   <label class="fontawesome-user" for="name"> 경도&nbsp;</label>
                   <input class="form__inpit" type="number"  step="0.000001" name="longtitude" placeholder="경도" style="width:70px;height:15px;">
-               </div><br><br><br>
+               </div><br>
                <div class="form__filed">
-                  <label class="fontawesome-user" for="name"> 설명&nbsp;</label>
                   <textarea name="description" placeholder="설명"></textarea>
                </div>
                <input type="submit">
             </div>
             </form>
-            <p><em>지도를 클릭해주세요!</em></p> 
-            //<div id="clickLatlng"></div>
-            <div id="clickLatlng1"></div>
-            <div id="clickLatlng2"></div>
-
-            `,"",`
-            
-            <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=645c80425f05e9d578b464a870031381"></script>
-            <div id="map" style="width:100%;height:350px;"></div>
-            <p><em>지도를 클릭해주세요!</em></p> 
-            <script>
-            var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                mapOption = { 
-                    center: new kakao.maps.LatLng(${latitude},${longtitude}), // 지도의 중심좌표
-                    level: 3 // 지도의 확대 레벨
-                };
-
-            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-            // 지도를 클릭한 위치에 표출할 마커입니다
-            var marker = new kakao.maps.Marker({ 
-                // 지도 중심좌표에 마커를 생성합니다 
-                position: map.getCenter() 
-            }); 
-            // 지도에 마커를 표시합니다
-            marker.setMap(map);
-
-            // 지도에 클릭 이벤트를 등록합니다
-            // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
-            kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
-                
-                // 클릭한 위도, 경도 정보를 가져옵니다 
-                var latlng = mouseEvent.latLng; 
-                
-                // 마커 위치를 클릭한 위치로 옮깁니다
-                marker.setPosition(latlng);
-                
-                var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-                message += '경도는 ' + latlng.getLng() + ' 입니다';
-                var message1 = latlng.getLat();
-                var message2 = latlng.getLng();
-                
-                var resultDiv = document.getElementById('clickLatlng'); 
-                var resultDiv1 = document.getElementById('clickLatlng1'); 
-                var resultDiv2 = document.getElementById('clickLatlng2'); 
-                
-                resultDiv.innerHTML = message;
-                resultDiv1.innerHTML = message1;
-                resultDiv2.innerHTML = message2;
-                
-                
-                
-            });
-            </script>
-            `);
+            `, '');
         response.writeHead(200);
         response.end(html);
 
@@ -246,9 +154,10 @@ var app = http.createServer(function (request, response) {
                     connection.query(`SELECT * FROM information`, function(err, rows, fields){
                         rawdata = rows;
                         console.log("정상적으로 DB에 저장 되었습니다.\n"+rows.length+" 개의 데이터가 존재 합니다.");
-                        response.writeHead(302, {Location: `/`});
-                        response.end('success');
+                  
                     });
+               response.writeHead(302, {Location: `/`});
+                    response.end('success');
                 }
             });
         });
@@ -260,9 +169,8 @@ var app = http.createServer(function (request, response) {
                 console.log(rows[0].title);
                 var title = rows[0].title;
                 var data = rows[0].description;
-                var test;
-                var latitude = parseFloat(rows[0].latitude);
-                var longtitude = parseFloat(rows[0].longtitude);
+                var latitude = rows[0].latitude;
+                var longtitude = rows[0].longtitude;
                 var list = template.Listrds(rawdata);
                 var html = template.HTML(title, list,
                     `
@@ -276,11 +184,11 @@ var app = http.createServer(function (request, response) {
                         </div >
                         <div class="form__filed"><br><br>
                             <label class="fontawesome-user" for="name">위도&nbsp;</label>
-                            <input class="form__inpit" type="number" step="0.000001" name="latitude" placeholder="위도" value="${latitude}" style="height:20px" >
+                            <input class="form__inpit" type="number" step="0.000001"  name="latitude" placeholder="위도" value="${latitude}" style="height:20px" >
                         </div >
                         <div class="form__filed"><br>
                             <label class="fontawesome-user" for="name"> 경도&nbsp;</label>
-                            <input class="form__inpit" type="number" step="0.000001"  name="longtitude" placeholder="경도" value="${longtitude}" style="height:20px">
+                            <input class="form__inpit" type="number" step="0.000001"  name="longtitude" placeholder="경도" value="${longtitude}"style="height:20px">
                         </div >
                             <div class="form__filed"><br><br>
                             <label class="fontawesome-user" for="name"> 내용&nbsp;</label></br>
@@ -290,47 +198,7 @@ var app = http.createServer(function (request, response) {
                     </div>
                     </form>
                     `,
-                    `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`,`
-                    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=645c80425f05e9d578b464a870031381"></script>
-                    <div id="map" style="width:100%;height:350px;"></div>
-                    <p><em>지도를 클릭해주세요!</em></p> 
-                    <div id="clickLatlng"></div>
-                    <script>
-                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                        mapOption = { 
-                            center: new kakao.maps.LatLng(${latitude},${longtitude}), // 지도의 중심좌표
-                            level: 3 // 지도의 확대 레벨
-                        };
-
-                    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                    // 지도를 클릭한 위치에 표출할 마커입니다
-                    var marker = new kakao.maps.Marker({ 
-                        // 지도 중심좌표에 마커를 생성합니다 
-                        position: map.getCenter() 
-                    }); 
-                    // 지도에 마커를 표시합니다
-                    marker.setMap(map);
-
-                    // 지도에 클릭 이벤트를 등록합니다
-                    // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
-                    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
-                        
-                        // 클릭한 위도, 경도 정보를 가져옵니다 
-                        var latlng = mouseEvent.latLng; 
-                        
-                        // 마커 위치를 클릭한 위치로 옮깁니다
-                        marker.setPosition(latlng);
-                        
-                        var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-                        message += '경도는 ' + latlng.getLng() + ' 입니다';
-                        
-                        var resultDiv = document.getElementById('clickLatlng'); 
-                        resultDiv.innerHTML = message;
-                        
-                    });
-                    </script>
-                    `);
+                    `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`);
                 response.writeHead(200);
                 response.end(html);
             });
