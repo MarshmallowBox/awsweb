@@ -38,6 +38,11 @@ var app = http.createServer(function (request, response) {
     if (pathname === '/') {
         // 쿼리데이터가 없을 때(초기 화면)
         if (queryData.id === undefined) {
+            // refresh
+            connection.query(`SELECT * FROM information`, function(err, rows, fields){
+                rawdata = rows;
+                console.log("정상적으로 DB에 접근 되었습니다.\n"+rows.length+" 개의 데이터가 존재 합니다.");
+            });
             var title = "Welcome";
             var description = "Hello, This is ddungdo's home";
             var list = template.Listrds(rawdata);
@@ -45,7 +50,7 @@ var app = http.createServer(function (request, response) {
             `<table id="empList" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" data-upgraded=",MaterialDataTable">
             <tbody><tr id="yy" class="mdl-data-table__cell--non-numeric">
             <th><a href="/create">create</a></th>
-            </tr></table>`);
+            </tr></table>`,"");
             response.writeHead(200);
             response.end(html);
         // 쿼리 데이터가 있을 때 (각 항목을 누른 상황)
@@ -64,10 +69,10 @@ var app = http.createServer(function (request, response) {
                   <div class="grid__container">
                      <div class="form--login" id="ds">
                         <br>
-                        <label class="fontawesome-user" for="name"> 위도&nbsp;</label>
+                        <label class="fontawesome-user" for="name"> 위도</label>
                         <label id="st">${latitude}</label>
                         
-                        <label class="fontawesome-user" for="name"> 경도&nbsp;</label>
+                        <label class="fontawesome-user" for="name"> 경도</label>
                         <label id="st">${longtitude}</label>
                         <br><br>
                         <strong>${data}</strong>
@@ -141,7 +146,6 @@ var app = http.createServer(function (request, response) {
         var title = 'WEB - create';
         var list = template.Listrds(rawdata);
         var latitude = "37.498284";
-        var test;
         var longtitude = "127.034290";
         var html = template.HTML(title, list, `
             <form action="/create_process" method="post" class="form form--login" name="createtag">
@@ -149,22 +153,23 @@ var app = http.createServer(function (request, response) {
             <input type="hidden" name="form_name2" value="">
             <div class="grid__container" name="createtagin">
                <div class="form__filed">
-                  <label class="fontawesome-user" for="name"> 위치 이름&nbsp;</label>
-                  <input class="form__inpit" type="text" name="title" placeholder="위치 이름">
+                  <label class="fontawesome-user" for="name"> 위치 이름</label>
+                  <input class="form__inpit" type="text" name="title" placeholder="위치 이름" required>
                </div>
                <br>
                <div class="form__filed2" name="lati">
-                  <label class="fontawesome-user" for="name"> 위도&nbsp;</label>
-                  <label class="st" id="clickLatlng1"></label>
+                  <label class="fontawesome-user" for="name" "> 위도</label>
+                  <label class="st" id="clickLatlng1" style="width:50px;"></label>
                </div><br>
                
                <div class="form__filed">
-                  <label class="fontawesome-user" for="name"> 경도&nbsp;</label>
+                  <label class="fontawesome-user" for="name"> 경도</label>
                   <label class="st" id="clickLatlng2"></label>
                   <div id="clickLatlng2"></div>
                </div><br><br><br>
                <div class="form__filed">
-                  <textarea name="description" placeholder="설명"></textarea>
+               <label class="fontawesome-user" for="name"> 내용</label></br>
+                  <textarea name="description" placeholder="설명" required></textarea>
                </div>
                <input type="submit">
             </div>
@@ -280,23 +285,23 @@ var app = http.createServer(function (request, response) {
             <input type="hidden" name="id" value="${title}">
             <div class="grid__container" name="createtagin">
                <div class="form__filed">
-                  <label class="fontawesome-user" for="name"> 위치 이름&nbsp;</label>
-                  <input class="form__inpit" type="text" name="title" placeholder="위치 이름" value="${title}">
+                  <label class="fontawesome-user" for="name"> 위치 이름</label>
+                  <input class="form__inpit" type="text" name="title" placeholder="위치 이름" value="${title}" required>
                </div>
                <br>
                <div class="form__filed2" name="lati">
-                  <label class="fontawesome-user" for="name"> 위도&nbsp;</label>
+                  <label class="fontawesome-user" for="name"> 위도</label>
                   <label class="st" id="clickLatlng1">${latitude}</label>
                </div><br>
                
                <div class="form__filed">
-                  <label class="fontawesome-user" for="name"> 경도&nbsp;</label>
+                  <label class="fontawesome-user" for="name"> 경도</label>
                   <label class="st" id="clickLatlng2">${longtitude}</label>
                   <div id="clickLatlng2"></div>
                </div><br><br><br>
                <div class="form__filed"><br><br>
-                    <label class="fontawesome-user" for="name"> 내용&nbsp;</label></br>
-                    <textarea name="description" placeholder="설명">${data}</textarea>
+                    <label class="fontawesome-user" for="name"> 내용</label></br>
+                    <textarea name="description" placeholder="설명" required>${data}</textarea>
                </div>
                <input type="submit">
             </div>
