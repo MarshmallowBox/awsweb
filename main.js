@@ -280,8 +280,8 @@ var app = http.createServer(function (request, response) {
                 var list = template.Listrds(rawdata);
                 var html = template.HTML(title, list, `
             <form action="/update_process" method="post" class="form form--login" name="createtag">
-            <input type="hidden" name="form_name" value="">
-            <input type="hidden" name="form_name2" value="">
+            <input type="hidden" name="form_name" value="${latitude}">
+            <input type="hidden" name="form_name2" value="${longtitude}">
             <input type="hidden" name="id" value="${title}">
             <div class="grid__container" name="createtagin">
                <div class="form__filed">
