@@ -249,7 +249,7 @@ var app = http.createServer(function (request, response) {
             var description = sanitizeHTML(post.description);
             console.log("title : "+ title);
             console.log("description : "+ description);
-            connection.query(`INSERT INTO information VALUES("${title}", "${post.form_name}", "${post.form_name2}", "${description}")`, function(err, rows, fields){
+            connection.query(`INSERT INTO information VALUES("${title}", "${post.form_name}", "${post.form_name2}", "${description.replace(/\r\n/g,"<br>")}")`, function(err, rows, fields){
                 // 오류가 발생 할 경우 에러 메세지 표시
                 if(err){
                     console.log(err.sqlMessage);
@@ -301,7 +301,7 @@ var app = http.createServer(function (request, response) {
                </div><br><br><br>
                <div class="form__filed"><br><br>
                     <label class="fontawesome-user" for="name"> 내용</label></br>
-                    <textarea name="description" placeholder="설명" required>${data}</textarea>
+                    <textarea name="description" placeholder="설명" required>${data.replace(/<br>/g,"\r\n")}</textarea>
                </div>
                <input type="submit">
             </div>
@@ -379,7 +379,7 @@ var app = http.createServer(function (request, response) {
             console.log("id : "+ post.id);
             console.log("title : "+ title);
             console.log("description : "+ description);
-            connection.query(`UPDATE information SET title = "${title}", latitude = "${post.form_name}", longtitude = "${post.form_name2}", description = "${description}" WHERE title = "${post.id}"`, function(err, rows, fields){
+            connection.query(`UPDATE information SET title = "${title}", latitude = "${post.form_name}", longtitude = "${post.form_name2}", description = "${description.replace(/\r\n/g,"<br>")}" WHERE title = "${post.id}"`, function(err, rows, fields){
                 // error 
                 if(err){
                     console.log(err.sqlMessage);
