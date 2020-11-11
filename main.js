@@ -10,7 +10,7 @@ var rawdata ;
 
 //RDS 접속 정보
 var connection = mysql.createConnection({
-    host: "nodejs-rds.cdaki73gryig.ap-northeast-2.rds.amazonaws.com",
+    host: "project-rds.cqdeksueggrk.ap-northeast-2.rds.amazonaws.com",
     user: "admin",
     password: "password",
     database: "data"

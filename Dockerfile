@@ -1,7 +1,6 @@
 FROM node
 WORKDIR /app
-COPY package*.json /app
-RUN npm install
-COPY . /app
-CMD ["npm", "start"]
+ADD . ./
+COPY . .
+CMD ["pm2-docker", "main.js"]
 EXPOSE 80
