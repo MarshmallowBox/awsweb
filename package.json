@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "start": "pm2 start main.js --watch",
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
